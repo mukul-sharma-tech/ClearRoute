@@ -51,7 +51,7 @@ export default function VideoMeetComponent() {
 
     let [showModal, setModal] = useState(true);
 
-    let [screenAvailable, setScreenAvailable] = useState();
+    let [_screenAvailable, setScreenAvailable] = useState(); // eslint-disable-line no-unused-vars
 
     let [messages, setMessages] = useState([])
 
@@ -61,7 +61,7 @@ export default function VideoMeetComponent() {
 
     let [askForUsername, setAskForUsername] = useState(true);
 
-    let [username, setUsername] = useState(localStorage.getItem("name") || "Guest");
+    let [username] = useState(localStorage.getItem("name") || "Guest");
     const role = localStorage.getItem("role") || "Customer";
     const [pinnedStreamId, setPinnedStreamId] = useState(null);
     const handlePin = (e, streamId) => { if (e) e.stopPropagation(); setPinnedStreamId(streamId); };
@@ -85,8 +85,8 @@ export default function VideoMeetComponent() {
     // }
 
     useEffect(() => {
-        getPermissions();
-    }, []);
+        getPermissions(); // eslint-disable-line react-hooks/exhaustive-deps
+    }, []); // getPermissions is stable — only needs to run once on mount
 
     useEffect(() => {
         if (!askForUsername && localVideoref.current && window.localStream) {
@@ -393,9 +393,9 @@ export default function VideoMeetComponent() {
 
     useEffect(() => {
         if (screen !== undefined) {
-            getDislayMedia();
+            getDislayMedia(); // eslint-disable-line react-hooks/exhaustive-deps
         }
-    }, [screen])
+    }, [screen]) // getDislayMedia intentionally excluded — adding it would cause infinite re-renders
     let handleScreen = () => {
         setScreen(!screen);
     }
@@ -408,15 +408,8 @@ export default function VideoMeetComponent() {
         window.location.href = "/"
     }
 
-    let openChat = () => {
-        setModal(true);
-        setNewMessages(0);
-    }
     let closeChat = () => {
         setModal(false);
-    }
-    let handleMessage = (e) => {
-        setMessage(e.target.value);
     }
 
     let handleRecord = async () => {
@@ -756,7 +749,7 @@ export default function VideoMeetComponent() {
                         </IconButton>
 
                         <Badge badgeContent={newMessages} max={999} color='error'>
-                            <IconButton onClick={() => setModal(!showModal)} style={{ color: "#0F172A" }}>
+                            <IconButton onClick={() => { setModal(!showModal); if (!showModal) setNewMessages(0); }} style={{ color: "#0F172A" }}>
                                 <ChatIcon />                        </IconButton>
                         </Badge>
 
