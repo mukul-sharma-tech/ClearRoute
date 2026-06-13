@@ -4,7 +4,7 @@ import { Container, Typography, Paper, Table, TableBody, TableCell, TableContain
 import { useNavigate } from 'react-router-dom';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
-const server_url = `http://${window.location.hostname}:8000`;
+const server_url = `https://clearroute-p3pd.onrender.com`;
 
 const defaultTheme = createTheme({
   palette: {

@@ -13,7 +13,7 @@ import StopScreenShareIcon from '@mui/icons-material/StopScreenShare'
 import ChatIcon from '@mui/icons-material/Chat'
 // import { connect } from "mongoose";
 
-const server_url = `http://${window.location.hostname}:8000`;
+const server_url = `https://clearroute-p3pd.onrender.com`;
 // const socket = io("http://localhost:8000");
 
 var connections = {};
@@ -85,8 +85,8 @@ export default function VideoMeetComponent() {
     // }
 
     useEffect(() => {
-        getPermissions(); // eslint-disable-line react-hooks/exhaustive-deps
-    }, []); // getPermissions is stable — only needs to run once on mount
+        getPermissions();
+    }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
         if (!askForUsername && localVideoref.current && window.localStream) {
@@ -393,9 +393,9 @@ export default function VideoMeetComponent() {
 
     useEffect(() => {
         if (screen !== undefined) {
-            getDislayMedia(); // eslint-disable-line react-hooks/exhaustive-deps
+            getDislayMedia();
         }
-    }, [screen]) // getDislayMedia intentionally excluded — adding it would cause infinite re-renders
+    }, [screen]) // eslint-disable-line react-hooks/exhaustive-deps
     let handleScreen = () => {
         setScreen(!screen);
     }
