@@ -21,7 +21,7 @@ var connections = {};
 const peerConfigConnections = {
     "iceServers": [
         // Using our own node-turn server to ensure media is routed through the server (no direct P2P)
-        { 
+        {
             "urls": "turn:localhost:3478",
             "username": "atomquest",
             "credential": "hackathon123"
@@ -64,6 +64,8 @@ export default function VideoMeetComponent() {
     let [username, setUsername] = useState(localStorage.getItem("name") || "Guest");
     const role = localStorage.getItem("role") || "Customer";
     const [pinnedStreamId, setPinnedStreamId] = useState(null);
+    const handlePin = (e, streamId) => { if (e) e.stopPropagation(); setPinnedStreamId(streamId); };
+    const handleUnpin = (e) => { if (e) e.stopPropagation(); setPinnedStreamId(null); };
 
     const [isRecording, setIsRecording] = useState(false);
     const mediaRecorderRef = useRef(null);
@@ -185,7 +187,7 @@ export default function VideoMeetComponent() {
             try {
                 window.screenStream.getTracks().forEach(track => track.stop());
             } catch (e) { console.log(e) }
-            
+
             window.screenStream = null;
 
             setVideos(videos => {
@@ -367,7 +369,7 @@ export default function VideoMeetComponent() {
         }
         setVideo(!video);
     }
-    
+
     let handleAudio = () => {
         if (window.localStream) {
             window.localStream.getAudioTracks().forEach(track => track.enabled = !audio);
@@ -428,7 +430,7 @@ export default function VideoMeetComponent() {
             // Record the user's screen + audio for the session recording
             const displayStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true });
             mediaRecorderRef.current = new MediaRecorder(displayStream);
-            
+
             mediaRecorderRef.current.ondataavailable = (event) => {
                 if (event.data.size > 0) {
                     recordedChunksRef.current.push(event.data);
@@ -476,7 +478,7 @@ export default function VideoMeetComponent() {
         // this.setState({ message: "", sender: username })
     }
 
-    
+
     let connect = () => {
         setAskForUsername(false);
         getMedia();
@@ -488,71 +490,71 @@ export default function VideoMeetComponent() {
 
             {askForUsername === true ?
 
-             ( <div className={styles.lobbyPage}> 
-    <div className={styles.lobbyBox}>
-      <h2 style={{ color: '#0F172A', fontWeight: 800, margin: 0 }}>ClearRoute Secure Room</h2>
-      <p style={{ color: '#475569', marginBottom: '20px', fontSize: '14px' }}>
-          Hardware Pre-Check • Joining as: <strong style={{ color: '#0F52BA' }}>{username}</strong>
-      </p>
+                (<div className={styles.lobbyPage}>
+                    <div className={styles.lobbyBox}>
+                        <h2 style={{ color: '#0F172A', fontWeight: 800, margin: 0 }}>ClearRoute Secure Room</h2>
+                        <p style={{ color: '#475569', marginBottom: '20px', fontSize: '14px' }}>
+                            Hardware Pre-Check • Joining as: <strong style={{ color: '#0F52BA' }}>{username}</strong>
+                        </p>
 
-      <div style={{ position: 'relative', width: '100%', borderRadius: '12px', overflow: 'hidden', border: '1px solid #E2E8F0', backgroundColor: '#0F172A' }}>
-        <video ref={localVideoref} autoPlay muted style={{ width: '100%', display: 'block', opacity: lobbyVideo ? 1 : 0.2 }} />
-        
-        {!lobbyVideo && (
-            <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', color: 'white', textAlign: 'center' }}>
-                <VideocamOffIcon style={{ fontSize: 40 }} />
-                <p style={{ margin: 0 }}>Camera Off</p>
-            </div>
-        )}
+                        <div style={{ position: 'relative', width: '100%', borderRadius: '12px', overflow: 'hidden', border: '1px solid #E2E8F0', backgroundColor: '#0F172A' }}>
+                            <video ref={localVideoref} autoPlay muted style={{ width: '100%', display: 'block', opacity: lobbyVideo ? 1 : 0.2 }} />
 
-        <div style={{ position: 'absolute', bottom: '15px', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '20px' }}>
-             <IconButton onClick={toggleLobbyVideo} disabled={!videoAvailable} style={{ backgroundColor: lobbyVideo ? '#0F52BA' : '#EF4444', color: 'white', padding: '12px' }}>
-                 {lobbyVideo ? <VideocamIcon /> : <VideocamOffIcon />}
-             </IconButton>
-             <IconButton onClick={toggleLobbyAudio} disabled={!audioAvailable} style={{ backgroundColor: lobbyAudio ? '#0F52BA' : '#EF4444', color: 'white', padding: '12px' }}>
-                 {lobbyAudio ? <MicIcon /> : <MicOffIcon />}
-             </IconButton>
-        </div>
-      </div>
+                            {!lobbyVideo && (
+                                <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', color: 'white', textAlign: 'center' }}>
+                                    <VideocamOffIcon style={{ fontSize: 40 }} />
+                                    <p style={{ margin: 0 }}>Camera Off</p>
+                                </div>
+                            )}
 
-      <Button
-        variant="contained"
-        color="primary"
-        onClick={connect}
-        style={{
-          width: "100%",
-          padding: "12px",
-          fontSize: "1rem",
-          fontWeight: "bold",
-          borderRadius: "9999px",
-          backgroundColor: "#0F52BA",
-          marginTop: "10px"
-        }}
-      >
-        Join Secure Session
-      </Button>
-    </div> 
-  </div> ) :
+                            <div style={{ position: 'absolute', bottom: '15px', left: '50%', transform: 'translateX(-50%)', display: 'flex', gap: '20px' }}>
+                                <IconButton onClick={toggleLobbyVideo} disabled={!videoAvailable} style={{ backgroundColor: lobbyVideo ? '#0F52BA' : '#EF4444', color: 'white', padding: '12px' }}>
+                                    {lobbyVideo ? <VideocamIcon /> : <VideocamOffIcon />}
+                                </IconButton>
+                                <IconButton onClick={toggleLobbyAudio} disabled={!audioAvailable} style={{ backgroundColor: lobbyAudio ? '#0F52BA' : '#EF4444', color: 'white', padding: '12px' }}>
+                                    {lobbyAudio ? <MicIcon /> : <MicOffIcon />}
+                                </IconButton>
+                            </div>
+                        </div>
+
+                        <Button
+                            variant="contained"
+                            color="primary"
+                            onClick={connect}
+                            style={{
+                                width: "100%",
+                                padding: "12px",
+                                fontSize: "1rem",
+                                fontWeight: "bold",
+                                borderRadius: "9999px",
+                                backgroundColor: "#0F52BA",
+                                marginTop: "10px"
+                            }}
+                        >
+                            Join Secure Session
+                        </Button>
+                    </div>
+                </div>) :
 
 
-                <div className={styles.meetVideoContainer}>
+                <div className={styles.meetVideoContainer} style={{ gridTemplateColumns: showModal ? '3fr 1fr' : '1fr' }}>
 
                     <div className={styles.topBar}>
-                        <div className={styles.badge}>
+                        {/* <div className={styles.badge}>
                             [🔴 REC 00:00:00] &nbsp; Session ID: #{window.location.pathname.split('/').pop()}
-                        </div>
-                        <div className={styles.badge}>
+                        </div> */}
+                        {/* <div className={styles.badge}>
                             [ WebRTC Custom Media Gateway ]
-                        </div>
+                        </div> */}
                     </div>
 
-                    <div className={styles.conferenceView} style={{ display: 'flex', flexDirection: 'row', gap: '15px', padding: '15px', height: 'calc(100vh - 100px)', overflow: 'hidden', width: '100%' }}>
+                    <div className={styles.conferenceView} style={{ display: 'flex', flexDirection: 'row', gap: '15px', padding: '15px', height: 'calc(100vh - 100px)', overflow: 'hidden' }}>
                         {videos.length === 0 && (
                             <div style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#64748B', fontSize: '24px', fontWeight: 'bold' }}>
                                 Waiting for others to join...
                             </div>
                         )}
-                        
+
                         {videos.length > 0 && (() => {
                             const pinnedVideo = videos.find(v => v.streamId === pinnedStreamId);
                             const unpinnedVideos = videos.filter(v => v !== pinnedVideo);
@@ -570,12 +572,13 @@ export default function VideoMeetComponent() {
                                                     }
                                                 }}
                                                 autoPlay
+                                                muted={pinnedVideo.isLocalScreen}
                                                 style={{ width: '100%', height: '100%', objectFit: 'contain' }}
                                             />
                                             {/* Absolute Overlay for Clicking (Prevents video from swallowing clicks) */}
-                                            <div onClick={(e) => { e.stopPropagation(); setPinnedStreamId(null); }} style={{ position: 'absolute', inset: 0, zIndex: 10, cursor: 'pointer' }}></div>
+                                            <div onClick={handleUnpin} style={{ position: 'absolute', inset: 0, zIndex: 10, cursor: 'pointer' }}></div>
                                             <div style={{ position: 'absolute', top: '15px', right: '15px', zIndex: 12 }}>
-                                                <Button variant="contained" color="error" onClick={(e) => { e.stopPropagation(); setPinnedStreamId(null); }} style={{ borderRadius: '8px', fontWeight: 'bold' }}>
+                                                <Button variant="contained" color="error" onClick={handleUnpin} style={{ borderRadius: '8px', fontWeight: 'bold' }}>
                                                     UNPIN
                                                 </Button>
                                             </div>
@@ -597,10 +600,11 @@ export default function VideoMeetComponent() {
                                                                 }
                                                             }}
                                                             autoPlay
+                                                            muted={video.isLocalScreen}
                                                             style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                                                         />
                                                         {/* Click Overlay */}
-                                                        <div onClick={(e) => { e.stopPropagation(); setPinnedStreamId(video.streamId); }} style={{ position: 'absolute', inset: 0, zIndex: 10, cursor: 'pointer' }}></div>
+                                                        <div onClick={(e) => handlePin(e, video.streamId)} style={{ position: 'absolute', inset: 0, zIndex: 10, cursor: 'pointer' }}></div>
                                                         <div style={{ position: 'absolute', bottom: '10px', left: '10px', backgroundColor: 'rgba(0,0,0,0.7)', color: 'white', padding: '4px 8px', fontSize: '10px', borderRadius: '4px', zIndex: 11, pointerEvents: 'none' }}>
                                                             Click anywhere to Pin
                                                         </div>
@@ -614,7 +618,7 @@ export default function VideoMeetComponent() {
                                 // Dynamic Grid Layout (Like Google Meet/Zoom)
                                 const count = videos.length;
                                 let gridStyle = { gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))' };
-                                
+
                                 if (count === 1) gridStyle = { gridTemplateColumns: '1fr', gridTemplateRows: '1fr' };
                                 else if (count === 2) gridStyle = { gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr' };
                                 else if (count <= 4) gridStyle = { gridTemplateColumns: '1fr 1fr', gridTemplateRows: '1fr 1fr' };
@@ -632,10 +636,11 @@ export default function VideoMeetComponent() {
                                                         }
                                                     }}
                                                     autoPlay
+                                                    muted={video.isLocalScreen}
                                                     style={{ flex: 1, width: '100%', height: '100%', objectFit: 'contain' }}
                                                 />
                                                 {/* Click Overlay */}
-                                                <div onClick={(e) => { e.stopPropagation(); setPinnedStreamId(video.streamId); }} style={{ position: 'absolute', inset: 0, zIndex: 10, cursor: 'pointer' }}></div>
+                                                <div onClick={(e) => handlePin(e, video.streamId)} style={{ position: 'absolute', inset: 0, zIndex: 10, cursor: 'pointer' }}></div>
                                                 <div style={{ position: 'absolute', bottom: '15px', left: '15px', backgroundColor: 'rgba(0,0,0,0.7)', color: 'white', padding: '6px 12px', fontSize: '12px', borderRadius: '6px', fontWeight: 'bold', zIndex: 11, pointerEvents: 'none' }}>
                                                     Click anywhere to Pin
                                                 </div>
@@ -648,31 +653,35 @@ export default function VideoMeetComponent() {
                     </div>
 
                     {/* Local PIP Video */}
-                    <video 
-                        className={styles.meetUserVideo} 
-                        ref={localVideoref} 
-                        autoPlay 
-                        muted 
+                    <video
+                        className={styles.meetUserVideo}
+                        ref={localVideoref}
+                        autoPlay
+                        muted
                         style={{
                             position: 'fixed',
                             bottom: '100px',
-                            right: '30px',
-                            width: '280px',
-                            height: '160px',
+                            right: showModal ? 'calc(25% + 30px)' : '30px',
+                            width: '200px',
+                            height: '120px',
                             objectFit: 'cover',
-                            borderRadius: '16px',
+                            borderRadius: '12px',
                             border: '3px solid #0F52BA',
-                            boxShadow: '0 15px 35px rgba(0,0,0,0.5)',
+                            boxShadow: '0 8px 20px rgba(0,0,0,0.4)',
                             zIndex: 50,
                             backgroundColor: '#0F172A',
-                            transform: screen ? 'none' : 'scaleX(-1)' // Mirror camera, but don't mirror screen share
+                            transform: screen ? 'none' : 'scaleX(-1)',
+                            transition: 'right 0.3s ease'
                         }}
                     />
 
                     {showModal ? <div className={styles.chatRoom}>
 
                         <div className={styles.chatContainer}>
-                            <h1>💬 CHAT & FILES</h1>
+                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                                <span style={{ fontSize: '1rem', fontWeight: 700, color: '#0F172A', letterSpacing: '-0.01em' }}>💬 Chat</span>
+                                <IconButton size="small" onClick={closeChat} style={{ color: '#64748B' }}>✕</IconButton>
+                            </div>
 
                             <div className={styles.chattingDisplay}>
 
@@ -680,7 +689,7 @@ export default function VideoMeetComponent() {
                                     const isFile = item.data.startsWith('FILE:');
                                     let fileName = '';
                                     let fileData = '';
-                                    if(isFile) {
+                                    if (isFile) {
                                         const parts = item.data.split(':');
                                         fileName = parts[1];
                                         fileData = parts.slice(2).join(':'); // rest is data url
@@ -707,13 +716,13 @@ export default function VideoMeetComponent() {
                             </div>
 
                             <div className={styles.chattingArea} style={{ display: 'flex', gap: '10px' }}>
-                                <input 
-                                    type="file" 
-                                    id="file-upload" 
-                                    style={{ display: 'none' }} 
+                                <input
+                                    type="file"
+                                    id="file-upload"
+                                    style={{ display: 'none' }}
                                     onChange={(e) => {
                                         const file = e.target.files[0];
-                                        if(file) {
+                                        if (file) {
                                             const reader = new FileReader();
                                             reader.onload = (ev) => {
                                                 socketRef.current.emit('chat-message', `FILE:${file.name}:${ev.target.result}`, username);
@@ -752,8 +761,8 @@ export default function VideoMeetComponent() {
                         </Badge>
 
                         {role === 'Agent' && (
-                            <Button 
-                                variant="contained" 
+                            <Button
+                                variant="contained"
                                 color={isRecording ? "error" : "primary"}
                                 onClick={handleRecord}
                                 style={{ marginLeft: '10px', borderRadius: '9999px', fontWeight: 'bold' }}
@@ -763,14 +772,14 @@ export default function VideoMeetComponent() {
                         )}
 
                         <IconButton onClick={handleEndCall} style={{ color: "white", backgroundColor: "#EF4444", marginLeft: 'auto' }}>
-                            <CallEndIcon  />
+                            <CallEndIcon />
                         </IconButton>
 
                     </div>
 
                     <div style={{ position: 'fixed', bottom: '10px', left: '10px', zIndex: 100, backgroundColor: 'rgba(0,0,0,0.8)', padding: '10px', borderRadius: '8px', color: 'white', fontSize: '12px' }}>
-                        <strong>Judge Utility Panel</strong><br/>
-                        Current Role: {role}<br/>
+                        <strong>Judge Utility Panel</strong><br />
+                        Current Role: {role}<br />
                         <Button size="small" variant="outlined" color="inherit" onClick={() => { localStorage.setItem('role', role === 'Agent' ? 'Customer' : 'Agent'); window.location.reload(); }} style={{ marginTop: '5px' }}>
                             Switch to {role === 'Agent' ? 'Customer' : 'Agent'} View
                         </Button>

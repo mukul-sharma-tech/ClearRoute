@@ -12,18 +12,17 @@ body {
   height: 100vh;
   background: #F8FAFC;
   display: grid;
-  grid-template-columns: 3fr 1fr;
   overflow: hidden;
 }
 
 .conferenceView {
-  grid-column: 1 / 2;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 20px;
   position: relative;
   height: 100vh;
+  min-width: 0;
 }
 
 .conferenceView video {
@@ -79,7 +78,6 @@ body {
 }
 
 .chatRoom {
-  grid-column: 2 / 3;
   height: 100vh;
   background: #FFFFFF;
   border-left: 1px solid #E2E8F0;
@@ -87,6 +85,8 @@ body {
   flex-direction: column;
   padding: 20px;
   box-shadow: -4px 0 15px rgba(0,0,0,0.02);
+  min-width: 0;
+  overflow: hidden;
 }
 
 .chatContainer {
